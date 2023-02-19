@@ -132,9 +132,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]
+          keys: [backend-build]
       - run:
-          name: Build front-end
+          name: Scan back-end
           command: |
             # Your code here
             cd frontend
