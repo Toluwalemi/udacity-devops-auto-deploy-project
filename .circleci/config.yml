@@ -1,37 +1,37 @@
 version: 2.1
 
-# commands:
-#   destroy-environment:
-#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-#     parameters:
-#       # Add parameter here   
-#     steps:
-#       - run:
-#           name: Destroy environments
-#           when: on_fail
-#           command: |
-#             # Your code here
-#             exit 1
+  # commands:
+  #   destroy-environment:
+  #     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+  #     parameters:
+  #       # Add parameter here
+  #     steps:
+  #       - run:
+  #           name: Destroy environments
+  #           when: on_fail
+  #           command: |
+  #             # Your code here
+  #             exit 1
 
-#   revert-migrations:
-#     description: Revert the last migration if successfully run in the current workflow.
-#     parameters:
-#       # Add parameter here     
-#     steps:
-#       - run:
-#           name: Revert migrations
-#           # Add when this will run
-#           command: |
-#             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-#             SUCCESS = 1
-#             if(( $SUCCESS==1 )); 
-#             then
-#             #  cd ~/project/backend
-#             #  npm install
-#             #  Add revert code here. You can find this in the Getting Started section.
-#               exit 1
-#             fi
-            
+  #   revert-migrations:
+  #     description: Revert the last migration if successfully run in the current workflow.
+  #     parameters:
+  #       # Add parameter here
+  #     steps:
+  #       - run:
+  #           name: Revert migrations
+  #           # Add when this will run
+  #           command: |
+  #             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+  #             SUCCESS = 1
+  #             if(( $SUCCESS==1 ));
+  #             then
+  #             #  cd ~/project/backend
+  #             #  npm install
+  #             #  Add revert code here. You can find this in the Getting Started section.
+  #               exit 1
+  #             fi
+
 jobs:
   build-frontend:
     docker:
@@ -39,7 +39,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]
+          keys: [ frontend-build ]
       - run:
           name: Build front-end
           command: |
@@ -48,7 +48,7 @@ jobs:
             npm install
             npm run build
       - save_cache:
-          paths: [frontend/node_modules]
+          paths: [ frontend/node_modules ]
           key: frontend-build
 
   build-backend:
@@ -57,16 +57,16 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [ backend-build ]
       - run:
           name: Back-end build
           command: |
-             # Your code here
-             cd backend
-             npm install
-             npm run build
+            # Your code here
+            cd backend
+            npm install
+            npm run build
       - save_cache:
-          paths: [backend/node_modules]
+          paths: [ backend/node_modules ]
           key: backend-build
 
   test-frontend:
@@ -78,7 +78,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [frontend-build]
+          keys: [ frontend-build ]
       # Your job code here
       - run:
           name: test front-end
@@ -87,7 +87,7 @@ jobs:
             cd frontend
             npm install
             npm run build
-                
+
   test-backend:
     docker:
       # Docker image here
@@ -97,16 +97,16 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [backend-build]
+          keys: [ backend-build ]
       # Your job code here
       - run:
           name: Back-end test
           command: |
-             # Your code here
-             cd backend
-             npm install
-             npm run build
-            
+            # Your code here
+            cd backend
+            npm install
+            npm run build
+
   scan-frontend:
     docker:
       # Docker image here
@@ -116,7 +116,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [frontend-build]
+          keys: [ frontend-build ]
       # Your job code here
       - run:
           name: Scan front-end
@@ -132,7 +132,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [ backend-build ]
       - run:
           name: Scan back-end
           command: |
@@ -186,7 +186,7 @@ jobs:
       # Add ssh keys with fingerprint
       - add_ssh_keys:
         fingerprints:
-            - "c9:3f:cb:73:ee:91:7f:f8:92:9a:b2:4f:40:9d:88:39"
+          - "c9:3f:cb:73:ee:91:7f:f8:92:9a:b2:4f:40:9d:88:39"
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -206,7 +206,7 @@ jobs:
           no_output_timeout: 30m
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}      
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   run-migrations:
     docker:
@@ -215,7 +215,7 @@ jobs:
       # Checkout code from git
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [ backend-build ]
       - run:
           name: Run migrations
           command: |
@@ -232,9 +232,9 @@ jobs:
             then
                 curl --insecure https://kvdb.io/4VJ274WBBHEq9RdkvTFDeu/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
-     # Here's where you will add some code to rollback on failure  
-     - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}        
+      # Here's where you will add some code to rollback on failure
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
     docker:
@@ -278,10 +278,10 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       # Here's where you will add some code to rollback on failure      
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-                    
+
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
@@ -292,7 +292,7 @@ jobs:
       # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints:
-              - "c9:3f:cb:73:ee:91:7f:f8:92:9a:b2:4f:40:9d:88:39"
+            - "c9:3f:cb:73:ee:91:7f:f8:92:9a:b2:4f:40:9d:88:39"
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -337,9 +337,9 @@ jobs:
 
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   smoke-test:
     docker:
@@ -394,9 +394,9 @@ jobs:
             fi
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   cloudfront-update:
     docker:
@@ -436,43 +436,43 @@ jobs:
       # Here's where you will add some code to rollback on failure  
 
 cleanup:
-    docker:
-      # Docker image here
-      - image: amazon/aws-cli
-    steps:
-      # Checkout code from git
-      - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            yum install tar gzip -y
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Get old stack workflow id
-          command: |
-            # your code here
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-            echo Stack names: "${STACKS[@]}"
-            cat ~/project/OldWorkflowID.txt
-            export OldWorkflowID=$(cat ~/project/OldWorkflowID.txt)
-            echo OldWorkflowID: "${OldWorkflowID}"
-      - run:
-          name: Remove old stacks and files
-          command: |
-            export OldWorkflowID=$(cat ~/project/OldWorkflowID.txt)
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
-            then
-              echo "Deleting old stack"
-              echo "s3://udapeople-${OldWorkflowID}"
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive || true
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}" || true
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}" || true
-            else
-              echo "Stack is the latest"
-            fi
-            
+  docker:
+    # Docker image here
+    - image: amazon/aws-cli
+  steps:
+    # Checkout code from git
+    - checkout
+    - run:
+        name: Install dependencies
+        command: |
+          yum install tar gzip -y
+    - attach_workspace:
+        at: ~/
+    - run:
+        name: Get old stack workflow id
+        command: |
+          # your code here
+          export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+          --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+          echo Stack names: "${STACKS[@]}"
+          cat ~/project/OldWorkflowID.txt
+          export OldWorkflowID=$(cat ~/project/OldWorkflowID.txt)
+          echo OldWorkflowID: "${OldWorkflowID}"
+    - run:
+        name: Remove old stacks and files
+        command: |
+          export OldWorkflowID=$(cat ~/project/OldWorkflowID.txt)
+          if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+          then
+            echo "Deleting old stack"
+            echo "s3://udapeople-${OldWorkflowID}"
+            aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive || true
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}" || true
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}" || true
+          else
+            echo "Stack is the latest"
+          fi
+
 
 workflows:
   default:
@@ -480,29 +480,29 @@ workflows:
       - build-frontend
       - build-backend
       - test-frontend:
-          requires: [build-frontend]
+          requires: [ build-frontend ]
       - test-backend:
-          requires: [build-backend]
+          requires: [ build-backend ]
       - scan-backend:
-          requires: [build-backend]
+          requires: [ build-backend ]
       - scan-frontend:
-          requires: [build-frontend]
+          requires: [ build-frontend ]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          requires: [ test-frontend, test-backend, scan-frontend, scan-backend ]
           filters:
             branches:
-              only: [test-feature-branch]
+              only: [ test-feature-branch ]
       - configure-infrastructure:
-          requires: [deploy-infrastructure]
+          requires: [ deploy-infrastructure ]
       - run-migrations:
-          requires: [configure-infrastructure]
+          requires: [ configure-infrastructure ]
       - deploy-frontend:
-          requires: [run-migrations]
+          requires: [ run-migrations ]
       - deploy-backend:
-          requires: [run-migrations]
+          requires: [ run-migrations ]
       - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+          requires: [ deploy-backend, deploy-frontend ]
       - cloudfront-update:
-          requires: [smoke-test]
+          requires: [ smoke-test ]
       - cleanup:
-          requires: [cloudfront-update]
+          requires: [ cloudfront-update ]
