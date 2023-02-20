@@ -88,7 +88,6 @@ jobs:
          name: Run frontend test
          command: |
            cd frontend
-           npm cache clean –force
            npm install
            npm run test
 
