@@ -121,6 +121,7 @@ jobs:
             npm install
             npm run test
 
+
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -135,6 +136,7 @@ jobs:
             cd backend
             npm install
             npm run test
+
 
   scan-frontend:
     docker:
@@ -173,7 +175,6 @@ jobs:
             npm audit fix --audit-level=critical
       - notify_slack_error
       - notify_slack_pass
-
 
   deploy-infrastructure:
     docker:
@@ -226,8 +227,8 @@ jobs:
       - checkout
       # Add ssh keys with fingerprint
       - add_ssh_keys:
-        fingerprints:
-          - "0c:48:84:3d:29:67:f8:7b:ff:85:c7:d1:37:9d:bc:08"
+          fingerprints:
+            - "0c:48:84:3d:29:67:f8:7b:ff:85:c7:d1:37:9d:bc:08"
       # attach workspace
       - attach_workspace:
           at: ~/
