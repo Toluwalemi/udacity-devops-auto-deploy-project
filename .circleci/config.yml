@@ -38,7 +38,22 @@ version: 2.1
   #             npm run migrations:revert
   #           fi
 
+orbs:
+  slack: circleci/slack@4.1
 
+commands:
+  notify_slack_error:
+    steps:
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
+  notify_slack_pass:
+    steps:
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+          
 jobs:
   build-frontend:
     docker:
@@ -122,7 +137,8 @@ jobs:
             cd frontend
             npm install
             npm audit fix --audit-level=critical
-
+      - notify_slack_error
+      - notify_slack_pass
 
   scan-backend:
     docker:
@@ -140,7 +156,9 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical
-
+      - notify_slack_error
+      - notify_slack_pass
+            
 
   # deploy-infrastructure:
   #   docker:
@@ -487,6 +505,8 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+      - notify:
+          context: slack-secrets
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
