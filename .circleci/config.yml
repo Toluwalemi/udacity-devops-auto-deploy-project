@@ -39,7 +39,7 @@ version: 2.1
   #           fi
 
 orbs:
-  slack: circleci/slack@4.1
+  slack: circleci/slack@4.4.2
 
 commands:
   notify_slack_error:
