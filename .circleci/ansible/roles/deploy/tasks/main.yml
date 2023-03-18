@@ -28,12 +28,7 @@
     global: yes
     production: yes
     state: present
-
-# - name: "Create backend app directory"
-#   file:
-#     path: ~/backend_app_dir
-#     state: directory
-
+  
 
 - name: "Copy artifact into Instance" 
   become: true
