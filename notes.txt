@@ -1,0 +1,7 @@
+cd .circleci/files
+aws cloudformation deploy \
+            --template-file cloudfront.yml \
+            --stack-name InitialStack\
+            --parameter-overrides WorkflowID=uda-demo-12345
+            
+6a:af:86:32:bc:c6:bb:fb:45:ef:ae:30:5d:c1:4b:af
