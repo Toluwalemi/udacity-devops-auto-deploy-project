@@ -315,7 +315,7 @@ jobs:
       - checkout
       # Add ssh keys with fingerprint
       - add_ssh_keys:
-        fingerprints:
+          fingerprints:
             - "6a:af:86:32:bc:c6:bb:fb:45:ef:ae:30:5d:c1:4b:af"
       # attach workspace
       - attach_workspace:
